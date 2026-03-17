@@ -1,0 +1,231 @@
+---
+description: Regra para criação de planejamentos pragmáticos e executáveis para projetos, alinhada com a stack preferencial e boas práticas
+globs: **/*.md
+alwaysApply: false
+---
+
+# Regra de Planejamento de Projetos
+
+Esta regra orienta a criação de documentos de planejamento estruturados, pragmáticos e prontos para execução pela IA.
+
+## Princípios Obrigatórios
+
+- **Nunca começar como MVP.** Sempre desenhar e implementar produtos **prontos para escalar** desde o início.
+- **Divisão por Áreas:** Concluídas as Fases Universais (1-4), a execução do projeto deve ser obrigatoriamente dividida por Áreas de Domínio (ex: Admin Master, Admin Cliente, Bot, etc.), garantindo modularidade.
+- **Boas práticas de código:** TypeScript strict, validação de inputs, tratamento de erros, padrões consistentes.
+
+---
+
+## Stack Tecnológica Padrão
+
+**SEMPRE** utilize como preferência:
+
+- **Monorepo:** Turborepo (obrigatório para projetos com api + web; `npm run dev` roda api e web em paralelo)
+- **Frontend:** Next.js (App Router) com TypeScript
+- **Backend:** Nest.js com TypeScript
+- **Banco de Dados:** MongoDB
+- **Containerização:** Docker (gerenciamento e ambiente)
+- **Cache/Fila:** Redis + BullMQ (obrigatório para processamento assíncrono)
+- **Storage:** S3/R2 (obrigatório para arquivos; não usar disco local)
+- **Internacionalização:** next-intl (Next.js)
+- **Theme:** next-themes (claro/escuro)
+- **State Management:** React Query (@tanstack/react-query) - obrigatório no frontend
+- **API Documentation:** Swagger/OpenAPI (@nestjs/swagger) - obrigatório
+
+---
+
+## Estrutura Obrigatória do Documento de Planejamento
+
+Todo documento de planejamento **deve** seguir esta ordem:
+
+### 1. Resumo das Fases do Projeto (obrigatório no início)
+
+**No início do documento de planejamento obrigatoriamente deve haver um resumo das fases do projeto.**
+
+Exemplo em tabela:
+
+```markdown
+## RESUMO DAS FASES DO PROJETO
+
+| Fase | Status | Observação |
+|------|--------|-------------|
+| FASE 0: Setup | Pendente / Concluída | ... |
+| FASE 1: i18n + Theme | Pendente / Concluída | ... |
+| FASE 2: [Nome] | Pendente / Concluída | ... |
+| ... | ... | ... |
+```
+
+Ou lista resumida com status. Esse resumo é o ponto de referência para acompanhamento; evite repetir checklist completo dentro de cada fase.
+
+### 2. Fases Detalhadas
+
+Cada fase detalhada **deve** conter:
+
+- **Descrição resumida do objetivo** (uma linha ou parágrafo curto no topo da fase)
+- **ENDPOINTS** (lista explícita dos endpoints da fase: método, path, descrição)
+- **LINKS DE CONEXÃO COM BACKEND** (Frontend → Backend: quais URLs o front chama, headers, body; Backend → Frontend: formato de resposta/erro)
+- **Exemplos de código** (trechos relevantes de backend e frontend)
+- Estrutura de arquivos, implementação detalhada, testes, checklist (conforme seções abaixo)
+
+---
+
+## Ordem Fixa das Fases Universais (Obrigatório)
+
+Todo projeto, independentemente do tipo, deve seguir esta sequência inicial para garantir uma fundação sólida:
+
+### FASE 1: Setup e Instalação
+- **Monorepo:** Turborepo (orquestração; `npm run dev` sobe api + web em paralelo)
+- **Frontend/Backend:** Next.js (App Router) e Nest.js com TypeScript
+- **Docker:** Mongoose (MongoDB) e Redis (BullMQ) configurados no Compose
+- **Documentação:** Swagger ativo no Backend
+
+### FASE 2: Globalização (Idiomas)
+- **Multilíngua:** `next-intl` no Next.js (rotas `app/[locale]/`, middleware, dicionários JSON)
+- **Controle:** Seletor de idioma no Header e persistência de locale
+
+### FASE 3: Estética e Temas
+- **Tema:** `next-themes` (ThemeProvider, toggle no layout)
+- **Design System:** Definição de cores base para temas Claro e Escuro (Cyan/Slate)
+
+### FASE 4: Identidade, Segurança e Acesso (O Portão)
+- **Backend:** AuthModule, UsersModule, JWT, Hashing (Bcrypt) e RBAC (Roles)
+- **Frontend:** Tela de Login e Middleware de proteção de rotas (Gatekeeper)
+- **Seed:** Criação obrigatória de usuário MasterAdmin inicial
+
+---
+
+## Modelos de Arquitetura por Tipo de Projeto
+
+### Modelo: SaaS (Multi-tenant)
+Para projetos SaaS, a hierarquia de funcionalidades deve seguir esta ordem de valor:
+
+- **FASE 5: Área Admin Master (Dono do SaaS)**  
+  *Sub-fases:* Gestão de Tenants (Empresas), Planos/Assinaturas, MRR e Orquestração IA Global.
+- **FASE 6: Área Admin Cliente (Dono da Empresa)**  
+  *Sub-fases:* Gestão de Equipe (Vendedores), Mapa de Leads e Consumo de créditos da empresa.
+- **FASE 7: Área do Usuário Final / Vendedor (Execução)**  
+  *Sub-fases:* Bot de WhatsApp, Fluxos de Campo, Geolocalização e IA de suporte.
+
+---
+
+## Conteúdo Obrigatório de Cada Fase Detalhada
+
+Para cada fase (a partir da terceira), a seção detalhada deve incluir:
+
+### Objetivo (resumido)
+
+Uma descrição curta do que a fase entrega.
+
+### ENDPOINTS
+
+Lista explícita:
+
+```markdown
+#### ENDPOINTS
+
+**Backend (prefixo /api quando aplicável):**
+- `POST /api/recurso` — Descrição
+- `GET /api/recurso/:id` — Descrição
+- ...
+
+**Frontend (chamadas em lib/api ou equivalentes):**
+- `POST /api/recurso` → nomeDaFunção()
+- ...
+```
+
+### LINKS DE CONEXÃO COM BACKEND
+
+```markdown
+#### LINKS DE COMUNICAÇÃO FRONTEND ↔ BACKEND
+
+**Frontend → Backend:**
+- Ação X: `METHOD /api/path` (body/headers quando relevante)
+- ...
+
+**Backend → Frontend:**
+- Resposta de sucesso: formato (ex.: `{ data, token }`)
+- Erros: formato (ex.: `{ message: string }`)
+```
+
+### Exemplos de Código
+
+Incluir trechos relevantes (controller, service, DTO, chamada no frontend, etc.) conforme a fase.
+
+### Demais subseções (por fase)
+
+- Estrutura de arquivos
+- Implementação detalhada (módulos, schemas, DTOs, páginas, componentes)
+- Processamento assíncrono (BullMQ) quando aplicável
+- Storage S3/R2 quando aplicável
+- React Query no frontend quando aplicável
+- Swagger nos controllers
+- Testes
+- Checklist de implementação (itens específicos da fase; não duplicar o resumo das fases)
+
+---
+
+## Fase de Alinhamento de Segurança e Sanitização
+
+**Acionar** uma fase (ou etapa obrigatória) de **alinhamento de segurança e sanitização** entre frontend e backend.
+
+Ela deve cobrir:
+
+- **Backend:** Autenticação (ex.: JWT), autorização (guards, RBAC), validação de inputs (class-validator, ValidationPipe), sanitização de dados, rate limiting, CORS, Helmet, isolamento multi-tenant (organizationId) quando aplicável
+- **Frontend:** Não enviar dados sensíveis em query params, uso correto de headers (Authorization), validação/sanitização de inputs (zod, escape de output), proteção contra XSS/CSRF
+- **Alinhamento:** Contratos de API (payloads, códigos de erro), tratamento de 401/403 no front, renovação de token
+
+Incluir na lista de fases (ex.: “FASE X: Segurança e Sanitização”) e nas fases detalhadas com subseção **Segurança** (ou documento dedicado) com os itens acima.
+
+Exemplo de subseção:
+
+```markdown
+#### Segurança e Sanitização
+
+- **Autenticação:** [Como é implementada]
+- **Autorização:** [Guards, roles]
+- **Validação:** [Backend e frontend]
+- **Sanitização:** [Dados e output]
+- **Rate Limiting / CORS / Helmet:** [Configuração]
+- **Multi-tenant:** [Validação de organizationId]
+```
+
+---
+
+## Implementação Detalhada (referência)
+
+### Backend (Nest.js)
+
+- Módulos, schemas MongoDB (Mongoose), DTOs com class-validator
+- Controllers com Swagger (@ApiOperation, @ApiResponse)
+- Guards (JwtAuthGuard, RolesGuard), pipes de validação global
+
+### Frontend (Next.js)
+
+- Rotas com next-intl: `app/[locale]/...`
+- Componentes, hooks, react-hook-form + zod
+- React Query para server state (useQuery, useMutation)
+- Arquivos de tradução: `messages/pt-BR.json`, `messages/en.json`
+
+### Docker e Monorepo
+
+- **Turborepo:** orquestra o monorepo; `npm run dev` na raiz roda api e web em paralelo.
+- Compose para infra (MongoDB, Redis). Apps em dev via `npm run dev` (Turborepo).
+- Produção: Dockerfiles para apps quando aplicável.
+
+### Exemplos de código
+
+Manter exemplos de controller, schema, DTO, página com i18n, componente com form, React Query, BullMQ processor e FilesService (S3/R2) conforme a regra anterior; usá-los nas fases detalhadas onde fizer sentido.
+
+---
+
+## Checklist Final do Planejamento
+
+Antes de considerar o planejamento completo:
+
+- [ ] **Resumo das fases do projeto está no início do documento**
+- [ ] FASE 0/1 = Setup (Next.js + Nest.js + Docker + MongoDB)
+- [ ] FASE 1/2 = Multilíngua (next-intl) + tema claro/escuro (next-themes)
+- [ ] Cada fase detalhada tem: objetivo resumido, ENDPOINTS, LINKS DE CONEXÃO COM BACKEND, exemplos de código
+- [ ] Existe fase (ou etapa) de alinhamento de segurança e sanitização (front + backend)
+- [ ] Produto desenhado para escalar (não MVP)
+- [ ] Endpoints documentados, schemas definidos, traduções planejadas, testes planejados

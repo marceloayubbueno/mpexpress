@@ -1,0 +1,183 @@
+---
+description: Planejamento para criar frontends MVP rápidos, escaláveis e alinhados à stack padrão, com setup, login e navegação prontos para evoluir com backend depois
+globs: **/*.md
+alwaysApply: false
+---
+
+# Regra de Planejamento – MVP Frontend Escalável
+
+Esta regra define como planejar **MVPs de frontend** rápidos de entregar, mas já preparados para escalar e receber backend/integrações depois, seguindo os princípios de `planejamento-projetos.mdc`.
+
+> Mesmo chamando de “MVP”, o objetivo **não é um protótipo descartável**, e sim um **primeiro recorte funcional de frontend**, pronto para ser acoplado a APIs reais sem reescrita estrutural.
+
+---
+
+## 1. RESUMO DAS FASES DO PROJETO (Frontend-only)
+
+Todo planejamento de frontend MVP deve começar com um resumo das fases:
+
+```markdown
+## RESUMO DAS FASES DO FRONTEND
+
+| Fase | Status   | Observação                                  |
+|------|----------|---------------------------------------------|
+| FASE 0: Setup   | Pendente | Stack, tooling e estrutura base  |
+| FASE 1: Login   | Pendente | Tela de login + validações       |
+| FASE 2: Shell   | Pendente | Layout, navegação, header/side   |
+| FASE 3: Páginas | Pendente | Telas principais em estado mock  |
+| FASE 4: Ready   | Pendente | Pronto para plugar backend/API   |
+```
+
+O status deve ser atualizado conforme a execução, mas o **formato das fases** deve ser mantido.
+
+---
+
+## 2. Stack Padrão para MVP Frontend
+
+Utilizar, por padrão:
+
+- **Frontend:** Next.js (App Router) com TypeScript  
+- **Estilo/tema:** Tailwind CSS + next-themes (tema claro/escuro opcional)  
+- **State Management:** React Query (para requests futuros) + estado local simples  
+- **Formulários/validação:** react-hook-form + zod  
+- **Internacionalização (opcional):** next-intl, se o projeto já tiver exigência de multi-idioma  
+
+> Mesmo sem backend implementado, já preparar o frontend para consumir APIs reais (via React Query / fetch wrappers), usando mocks ou serviços fake no início.
+
+---
+
+## 3. Fases Detalhadas
+
+### FASE 0 – Setup do Projeto
+
+**Objetivo:** Criar a base técnica do frontend, pronta para evoluir.
+
+- Criar projeto Next.js (App Router) com TypeScript.  
+- Configurar Tailwind CSS.  
+- Configurar aliases de import (ex.: `@/components`, `@/lib`).  
+- Definir estrutura mínima de pastas:
+  - `app/` (rotas)  
+  - `components/`  
+  - `lib/` (APIs, helpers)  
+  - `styles/`  
+- (Opcional) Configurar next-themes (tema claro/escuro).  
+- (Opcional) Configurar next-intl (se multi-idioma for requisito já no MVP).  
+
+**ENDPOINTS (simulados)**  
+Nesta fase, apenas declarar **interfaces**/tipos para chamadas futuras (ex.: `login`, `getCurrentUser`), sem implementação real.
+
+---
+
+### FASE 1 – Tela de Login (Mockada)
+
+**Objetivo:** Ter uma tela de login funcional do ponto de vista de UX, com validação de campos, pronta para plugar autenticação real depois.
+
+Inclui:
+
+- Página `/login` com:
+  - campos de e-mail/usuário e senha;  
+  - validação de formulário (zod/react-hook-form);  
+  - mensagens de erro amigáveis.  
+- Botão de “Entrar” que hoje:
+  - chama uma função fake (`fakeLogin`) que simula resposta de sucesso/erro;  
+  - em caso de sucesso, redireciona para a **área autenticada** (ex.: `/app`).  
+- Definição da interface esperada para o endpoint real de login:
+  - request: `{ email, password }`;
+  - response (mock): `{ token, user: { id, name, role } }`.  
+
+**Links Front → Backend (planejados)**  
+
+```markdown
+POST /api/auth/login
+- Body: { email: string; password: string }
+- Sucesso: { token: string; user: { id: string; name: string; role: string } }
+- Erro: { message: string }
+```
+
+No MVP frontend-only, essa rota será **simulada** por serviço local (mock), mas o contrato já fica definido.
+
+---
+
+### FASE 2 – Shell de Aplicação (Layout + Navegação)
+
+**Objetivo:** Criar o “esqueleto” da aplicação pós-login, com layout e navegação principais.
+
+Inclui:
+
+- Layout base para rotas autenticadas (ex.: `/app`):
+  - header/topbar (nome do sistema, usuário logado fake);  
+  - sidebar ou menu principal com navegação entre páginas;  
+  - área de conteúdo.  
+- Rotas principais simuladas:
+  - `/app/dashboard`  
+  - `/app/[outras-páginas]` dependendo do projeto.  
+- Componente de **guard de rota** simplificado:
+  - verifica em um estado global/mock se o usuário está “logado”;  
+  - se não, redireciona para `/login`.  
+
+> Não precisa de JWT real nesta fase; basta simular “usuário logado” via contexto/React Query/cache local.
+
+---
+
+### FASE 3 – Páginas Principais em Modo Mock
+
+**Objetivo:** Entregar as telas chave em modo visual, com dados fictícios, para apresentação e validação de fluxo.
+
+Inclui:
+
+- Montar as páginas principais (dashboard, listagens, formulários) usando:
+  - dados mockados em arquivos locais (`/lib/mocks/...`);  
+  - componentes reutilizáveis (tabelas, cards, inputs, botões).  
+- Definir **tipos/contratos** que serão usados depois nas chamadas reais (ex.: `User`, `Order`, `Product`).  
+- Se fizer sentido, simular estados de loading/erro já prevendo uso de React Query no futuro.
+
+> O foco aqui é ter algo **apresentável** para o cliente/usuários finais, com UX fluida, mesmo sem dados reais.
+
+---
+
+### FASE 4 – Pronto para backend (Ready for API)
+
+**Objetivo:** Garantir que o frontend esteja pronto para plugar um backend real **sem refatorações grandes**.
+
+Checklist:
+
+- Todos os acessos a dados estão encapsulados em funções em `lib/api` ou `lib/services`.  
+- Contratos de API (tipos de request/response) estão definidos em um único lugar.  
+- Páginas consomem dados apenas via hooks/funções de serviço (não acessam mocks diretamente).  
+- Pontos de integração planejados:
+  - `login`  
+  - `getCurrentUser`  
+  - `listar recursos principais (ex.: pedidos, clientes, etc.)`  
+- Documentar brevemente como o backend deverá responder (formatos JSON esperados).
+
+---
+
+## 4. Boas Práticas Específicas para MVP Frontend
+
+- **Não acoplar mocks diretamente às páginas** – sempre passar por uma camada de serviço.  
+- **Não travar o design** em pixel-perfect se isso atrasar; priorizar fluxo funcional e clareza.  
+- **Deixar visível** onde está “fake”:
+  - Ex.: comentário no código, flag de ambiente, avisos sutis em ambiente de demo.  
+- **Preparar desde já**:
+  - estados de loading/erro;  
+  - mensagens de erro amigáveis;  
+  - responsividade mínima (desktop primeiro, mobile se for requisito).  
+
+---
+
+## 5. Como usar esta regra
+
+Ao iniciar um novo projeto **frontend-only**:
+
+1. Criar um documento de planejamento específico (`planejamento-<projeto>-frontend.md`) usando esta estrutura.  
+2. Preencher o **RESUMO DAS FASES** com status inicial “Pendente”.  
+3. Detalhar FASE 0 a FASE 3 de acordo com o contexto do projeto (quais páginas, quais rotas).  
+4. Marcar explicitamente quais contratos de API serão necessários na FASE 4.  
+5. Entregar o MVP mínimo com:
+   - login mockado,  
+   - shell de navegação,  
+   - telas principais com dados fictícios.  
+6. Na evolução, usar a FASE 4 como base para criação do planejamento de backend (seguindo `planejamento-projetos.mdc`).
+
+Assim, mesmo trabalhando com “MVP rápido”, o frontend nasce **limpo, escalável e pronto para receber backend sem recomeçar do zero**.
+

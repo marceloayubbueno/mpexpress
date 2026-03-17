@@ -1,0 +1,114 @@
+---
+description: Regra para executar fases de projetos com qualidade de produção, pragmatismo e boas práticas, preparada para escalar o desenvolvimento
+globs: **/*
+alwaysApply: false
+---
+
+# Execução de Projetos (por Fases)
+
+Esta regra orienta a **execução das fases do projeto** (setup → auth → áreas → integrações → entrega), com foco em qualidade, previsibilidade e base sólida para escalar.
+
+> A mentalidade aqui é: **entregar profissional desde o início**, com decisões claras, boas práticas e documentação mínima do que foi executado em cada fase.
+
+---
+
+## 1. Atitude e Foco
+
+- **Executar por fases, sem pular fundação.** Setup, segurança e estrutura vêm antes de features.
+- **Profissional e pragmático.** Sem gambiarra, sem over-engineering; o código precisa ser fácil de manter e evoluir.
+- **Pensar em escala.** Tudo deve nascer com padrões, contratos e separação de responsabilidades.
+
+---
+
+## 2. Como executar uma fase (padrão)
+
+Em toda fase, siga o mesmo ciclo:
+
+- **Definir objetivo curto**: o que esta fase entrega.
+- **Listar entregáveis**: telas, rotas, módulos, serviços, integrações.
+- **Definir contratos**: tipos, payloads, estados (loading/erro), permissões.
+- **Implementar** seguindo padrões do projeto.
+- **Validar** (manual/automático) o que foi entregue na fase.
+- **Atualizar documentação**: marcar fase como concluída e registrar decisões importantes.
+
+---
+
+## 3. Padrões de implementação (mínimo aceitável)
+
+### 3.1 Arquitetura e Organização
+
+- **Estrutura organizada e consistente**:
+  - Pastas bem nomeadas (`app/`, `components/`, `lib/`, `modules/`, `services/` etc.).  
+  - Arquivos segmentados por responsabilidade (sem arquivos gigantes desnecessários).  
+- **Isolar integrações e contratos**:
+  - Nunca chamar APIs externas diretamente dentro de componentes/páginas; use camada de serviço (`lib/api`, `services/*`).  
+  - Definir tipos/contratos de request/response em um único lugar, reutilizável.
+
+### 3.2 Qualidade de Código
+
+- **Tipar tudo** (TypeScript estrito quando aplicável).  
+- **Validar inputs** (zod, class-validator, etc.).  
+- **Tratar erros** de forma clara (mensagens amigáveis, logs adequados).  
+- Evitar duplicação de lógica – extrair helpers quando fizer sentido.
+
+### 3.3 UX mínima, mas profissional
+
+- Fluxos principais devem ser **claros e consistentes** (login, navegação, salvar/cancelar).  
+- Estados de loading/erro devem ser tratados visualmente (spinners, mensagens).  
+- Responsividade mínima (desktop garantido, mobile planejado conforme o projeto).
+
+---
+
+## 4. Execução guiada pelo Planejamento
+
+Sempre que existir um documento de planejamento (`planejamento-*.md`):
+
+1. Leia o **RESUMO DAS FASES** e identifique em qual fase está trabalhando.  
+2. Use as seções de fases detalhadas como **checklist de implementação**:
+   - Objetivos, endpoints, links front ↔ back, contratos, etc.  
+3. Não pule etapas essenciais (ex.: criar serviço sem definir tipo/contrato, criar tela sem pensar no fluxo).
+
+Se não houver planejamento ainda:
+- Crie um **esqueleto mínimo** de planejamento (pode ser simples), seguindo `planejamento-projetos.mdc` ou `planejamento-mvp-frontend.mdc`, e só então comece a codar.
+
+---
+
+## 5. Integração e Evolução (preparar para escalar)
+
+- **Sempre deixar contratos definidos**, mesmo que a integração ainda seja mockada.
+- **Criar camadas de serviço** para permitir troca de mock → real sem reescrever telas.
+- **Planejar permissões por área** (Admin, Vendas, Gestão, Fiscal) antes de espalhar regras.
+- Quando entrar backend/DB/Docker/monorepo, seguir o planejamento específico (sem recomeçar o frontend do zero).
+
+---
+
+## 6. Segurança e Boas Práticas (mínimo)
+
+Mesmo em desenvolvimento inicial:
+
+- Nunca logar dados sensíveis (senhas, tokens) em claro.  
+- Evitar expor chaves/API keys em cliente (usar variáveis de ambiente adequadas).  
+- Não deixar rotas internas desprotegidas em produção (mesmo que no início o auth seja simples).
+
+---
+
+## 7. Ao Final de Cada Fase
+
+1. **Revisar estrutura**:
+   - Pastas/arquivos coerentes?  
+   - Serviços/API isolados?  
+2. **Revisar código**:
+   - Tipagem adequada?  
+   - Validações mínimas?  
+   - Fluxo de erro/loading tratado?  
+3. **Atualizar o planejamento**:
+   - Marcar fase/tarefas como concluídas.  
+   - Anotar próximos passos que surgiram durante o desenvolvimento.  
+4. **Comunicar claramente**:
+   - O que foi criado (módulos/telas/serviços).  
+   - Como integrar ou usar o que foi feito (rotas, props, contratos).  
+
+---
+
+Em resumo: execute o projeto **por fases**, com qualidade e pragmatismo, registrando decisões e deixando a base pronta para evoluir e escalar com segurança.
+

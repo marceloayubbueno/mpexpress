@@ -1,0 +1,219 @@
+---
+description: Stack tecnológica do projeto, versões das dependências e melhores práticas
+globs: **/*
+alwaysApply: true
+---
+# Stack Tecnológica do Projeto
+
+## Framework e Core
+
+### Next.js 16.1.1
+- **Framework**: Next.js (React Framework)
+- **Versão**: ^16.1.1
+- **Melhores Práticas**:
+  - Utilize App Router (app directory) como padrão para novos projetos
+  - Aproveite Server Components por padrão para melhor performance
+  - Use Server Actions para mutações de dados (substituindo API Routes quando apropriado)
+  - Implemente Streaming e Suspense para melhor UX
+  - Configure Metadata API para SEO otimizado
+  - Utilize `generateStaticParams` para rotas dinâmicas estáticas quando possível
+
+### React 19.2.3
+- **Versão**: ^19.2.3
+- **React DOM**: ^19.2.3
+- **Melhores Práticas**:
+  - Utilize React Server Components quando possível
+  - Aproveite as novas features do React 19 como Actions, useFormStatus, useOptimistic
+  - Use hooks modernos: useTransition, useDeferredValue para otimizações
+  - Implemente Error Boundaries para tratamento de erros
+  - Prefira composição sobre herança
+  - Mantenha componentes pequenos e focados (máximo 200-300 linhas)
+
+### TypeScript 5.8.3
+- **Versão**: ^5.8.3
+- **Melhores Práticas**:
+  - Use strict mode no tsconfig.json
+  - Defina tipos explícitos para props e retornos de funções
+  - Evite `any` - use `unknown` quando necessário
+  - Utilize type guards para validação de tipos
+  - Aproveite utility types (Pick, Omit, Partial, etc.)
+  - Mantenha tipos próximos ao código que os utiliza
+
+## Estilização
+
+### Tailwind CSS 3.4.1
+- **Versão**: ^3.4.1
+- **PostCSS**: ^8.5.6
+- **Autoprefixer**: ^10.4.21
+- **Melhores Práticas**:
+  - Use classes utilitárias do Tailwind em vez de CSS customizado quando possível
+  - Configure `tailwind.config.js` para temas e variáveis customizadas
+  - Utilize `@apply` com moderação (apenas para componentes reutilizáveis)
+  - Implemente dark mode usando `dark:` prefix
+  - Use `tailwind-merge` para mesclar classes condicionalmente
+  - Mantenha classes organizadas: layout → spacing → typography → colors → effects
+
+### tailwind-merge 2.0.0
+- **Versão**: ^2.0.0
+- **Uso**: Mesclar classes Tailwind condicionalmente sem conflitos
+- **Exemplo**:
+  ```typescript
+  import { clsx } from 'clsx';
+  import { twMerge } from 'tailwind-merge';
+  
+  export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+  }
+  ```
+
+### clsx 2.0.0
+- **Versão**: ^2.0.0
+- **Uso**: Construir strings de classes condicionalmente
+- **Melhores Práticas**:
+  - Combine com `tailwind-merge` para evitar conflitos de classes
+  - Use para classes condicionais baseadas em props/state
+
+## UI e Componentes
+
+### @headlessui/react 2.2.4
+- **Versão**: ^2.2.4
+- **Melhores Práticas**:
+  - Use componentes acessíveis (Dialog, Menu, Popover, etc.)
+  - Implemente gerenciamento de foco e navegação por teclado
+  - Combine com Tailwind para estilização customizada
+  - Utilize render props quando necessário para controle fino
+
+### lucide-react 0.469.0
+- **Versão**: ^0.469.0
+- **Melhores Práticas**:
+  - Importe ícones individualmente para tree-shaking otimizado
+  - Use `size` e `strokeWidth` props para consistência
+  - Prefira ícones outline para interfaces modernas
+  - Mantenha tamanhos consistentes (16px, 20px, 24px padrão)
+
+## Animações e Interatividade
+
+### framer-motion 12.22.0
+- **Versão**: ^12.22.0
+- **Melhores Práticas**:
+  - Use `motion` components para animações declarativas
+  - Prefira `variants` para animações complexas e reutilizáveis
+  - Implemente `AnimatePresence` para transições de entrada/saída
+  - Otimize com `layoutId` para animações compartilhadas
+  - Use `useReducedMotion` para acessibilidade
+  - Evite animações excessivas que podem causar problemas de performance
+
+### aos (Animate On Scroll) 2.3.4
+- **Versão**: ^2.3.4
+- **Melhores Práticas**:
+  - Use para animações simples de scroll
+  - Configure `offset`, `duration`, `easing` apropriadamente
+  - Combine com `react-intersection-observer` para controle mais fino quando necessário
+  - Evite usar em elementos muito pequenos ou muitos elementos simultaneamente
+
+### react-intersection-observer 9.16.0
+- **Versão**: ^9.16.0
+- **Melhores Práticas**:
+  - Use `useInView` hook para detecção de visibilidade
+  - Configure `threshold` e `rootMargin` para melhor performance
+  - Implemente lazy loading de imagens e componentes
+  - Combine com animações para scroll-based effects
+
+## Componentes Especializados
+
+### swiper 11.1.0
+- **Versão**: ^11.1.0
+- **Melhores Práticas**:
+  - Configure módulos necessários (Navigation, Pagination, etc.)
+  - Use `Swiper` e `SwiperSlide` components
+  - Implemente lazy loading para imagens em carrosséis
+  - Configure breakpoints responsivos
+  - Otimize para touch devices
+
+### react-countup 6.5.3
+- **Versão**: ^6.5.3
+- **Melhores Práticas**:
+  - Use para animações de números (estatísticas, contadores)
+  - Configure `duration`, `decimals`, `separator` apropriadamente
+  - Combine com `react-intersection-observer` para iniciar quando visível
+
+### react-hot-toast 2.5.2
+- **Versão**: ^2.5.2
+- **Melhores Práticas**:
+  - Configure `Toaster` no layout raiz
+  - Use tipos apropriados (success, error, loading, etc.)
+  - Implemente posicionamento consistente
+  - Configure `duration` baseado na importância da mensagem
+  - Use para feedback de ações do usuário
+
+## Ferramentas de Desenvolvimento
+
+### ESLint 9.39.2
+- **Versão**: ^9.39.2
+- **Config**: eslint-config-next ^16.1.1
+- **Melhores Práticas**:
+  - Execute `npm run lint` antes de commits
+  - Corrija warnings e errors antes de fazer merge
+  - Configure regras customizadas no `.eslintrc.json` se necessário
+  - Use `eslint-disable` com moderação e sempre com comentário justificativo
+
+### @types/node 20.19.4
+- **Versão**: ^20.19.4
+- **Uso**: Tipos TypeScript para Node.js APIs
+
+### @types/react 18.3.23
+- **Versão**: ^18.3.23
+- **Nota**: Versão de tipos para React 18, mas projeto usa React 19. Verificar compatibilidade.
+
+### @types/react-dom 18.3.7
+- **Versão**: ^18.3.7
+- **Nota**: Versão de tipos para React DOM 18, mas projeto usa React DOM 19. Verificar compatibilidade.
+
+## Considerações Importantes
+
+### Compatibilidade de Versões
+⚠️ **Atenção**: O projeto usa React 19.2.3, mas os tipos TypeScript são para React 18. Considere:
+- Atualizar `@types/react` e `@types/react-dom` para versões compatíveis com React 19 quando disponíveis
+- Ou verificar se React 19 inclui tipos próprios e remover dependências de tipos se não forem necessárias
+
+### Performance
+- Utilize Next.js Image component para otimização automática de imagens
+- Implemente code splitting com `dynamic` import quando apropriado
+- Use `React.memo` e `useMemo`/`useCallback` com moderação (apenas quando necessário)
+- Monitore bundle size com `@next/bundle-analyzer`
+
+### Acessibilidade
+- Sempre use componentes acessíveis do Headless UI
+- Implemente ARIA labels quando necessário
+- Teste navegação por teclado
+- Use `useReducedMotion` para respeitar preferências do usuário
+
+### Segurança
+- Valide e sanitize inputs do usuário
+- Use Server Actions com validação adequada
+- Implemente CSRF protection quando necessário
+- Mantenha dependências atualizadas (`npm audit` regularmente)
+
+## Scripts Disponíveis
+
+```json
+{
+  "dev": "next dev",        // Desenvolvimento local
+  "build": "next build",    // Build de produção
+  "start": "next start",    // Servidor de produção
+  "lint": "next lint"       // Verificação de lint
+}
+```
+
+## Estrutura Recomendada
+
+```
+app/
+├── (routes)/              # Rotas agrupadas
+├── components/            # Componentes reutilizáveis
+│   ├── ui/               # Componentes base (Headless UI + Tailwind)
+│   └── features/         # Componentes específicos de features
+├── lib/                  # Utilitários e helpers
+├── hooks/                # Custom hooks
+└── types/                # TypeScript types
+```

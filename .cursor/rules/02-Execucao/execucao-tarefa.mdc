@@ -1,0 +1,68 @@
+---
+description: Regra de execução de tarefas. Use ao executar qualquer tarefa para garantir foco, minimalismo, preservação da funcionalidade e padrões do sistema.
+globs: **/*
+alwaysApply: false
+---
+# Execução de Tarefa
+
+Siga esta regra **sempre que for executar uma tarefa**. Mantenha o raciocínio abaixo; não pule itens.
+
+---
+
+## 1. Atitude e Instruções
+
+- **Pode seguir** — execute a tarefa conforme solicitado.
+- **Siga as instruções à risca; não pule nada.**
+- **Seja simples** = mínima mudança no que já funciona.
+- **100% foco nessa tarefa.**
+
+---
+
+## 2. Escopo das Mudanças
+
+- Faça **mudanças mínimas necessárias** para funcionar.
+- **Adicione apenas o necessário** para o funcionamento.
+- **Crie apenas o necessário** para funcionar.
+- **Preserve 100% da funcionalidade atual.**
+
+---
+
+## 3. Padrões do Sistema
+
+Siga **à risca**:
+
+- Os **padrões do sistema**.
+- As **boas práticas de organização do código**.
+- Os **padrões de funcionamento CSS**.
+- Os **padrões de funcionamento HTML**.
+- Os **padrões de funcionamento front e backend**.
+- Os **padrões de funcionamento JWT multicliente** do sistema.
+
+**Não mude regras de sistema;** o sistema já está funcionando. São **melhorias incrementais** — siga o que já está pronto.
+
+---
+
+## 4. O Que Não Fazer
+
+- **Não analise** outros arquivos (fora do escopo da tarefa).
+- **Não modifique** outros arquivos (apenas os estritamente necessários).
+- **Não modifique** links de comunicação.
+- **Não quebre** endpoints; tome cuidado ao alterá-los.
+
+---
+
+## 5. Qualidade e Processo
+
+- **Zero bugs** no sistema.
+- **Teste cada passo** antes de continuar.
+- **Se algo quebrar, pare imediatamente.**
+
+---
+
+## 6. Ao Final da Tarefa
+
+1. **Explique** quais arquivos foram alterados.
+2. **Verifique** se as funcionalidades estão íntegras.
+3. **Atualize** a documentação de planejamento.
+4. **Informe** a próxima fase.
+5. **Peça permissão** para seguir.

@@ -1,0 +1,138 @@
+---
+description: Regra para executar MVPs de frontend com rapidez, qualidade e estrutura pronta para escalar e plugar backend/ERP depois
+globs: **/*
+alwaysApply: false
+---
+
+# Execução de MVP Frontend (por Fases)
+
+Esta regra orienta a execução de um **MVP frontend** (frontend-only) de forma rápida, mas com estrutura profissional para evoluir para um projeto completo depois.
+
+Referências:
+- Planejamento: `01-Planejamento/planejamento-mvp-frontend.mdc`
+- Execução por fases (geral): `02-Execucao/execucao-projetos.mdc`
+
+---
+
+## 1. Princípios do MVP (o que é e o que não é)
+
+- **MVP aqui é entrega apresentável**, não protótipo descartável.
+- **Mock é permitido**, mas:
+  - deve passar por uma camada de serviço (`lib/services`),
+  - deve ter contratos/tipos definidos (para trocar mock → API real).
+- **Não travar o avanço** com infra completa (Docker/DB/monorepo) nesta etapa, mas:
+  - deixar “ganchos” prontos para plugar depois sem refatoração grande.
+
+---
+
+## 2. Ciclo de execução por fase (padrão)
+
+Em cada fase:
+
+- Definir **objetivo curto**.
+- Listar **entregáveis** (rotas, componentes, serviços).
+- Definir **contratos** (types, payloads, estados loading/erro).
+- Implementar.
+- Validar manualmente o fluxo.
+- Atualizar o documento de planejamento (`doc/planejamento-frontend-mvp.md`) marcando status.
+
+---
+
+## 3. Padrões mínimos (MVP)
+
+### 3.1 Estrutura
+
+- Rotas em `app/` (App Router).
+- UI em `components/` (componentes reutilizáveis).
+- Serviços em `lib/services/`:
+  - `auth.ts`, `stores.ts`, `products.ts`, `orders.ts` (ou equivalentes).
+- Tipos em `lib/types/` (ou `lib/contracts.ts`) para centralizar contratos.
+
+### 3.2 UX mínima profissional
+
+- Sempre ter:
+  - loading,
+  - erro,
+  - empty state (lista vazia).
+- Formulários com validação (zod + react-hook-form).
+
+### 3.3 Sem “atalho perigoso”
+
+- Não acessar mocks direto dentro de páginas.
+- Não espalhar lógica de “autenticação fake” em vários lugares (centralizar em `authService`).
+
+---
+
+## 4. Checklist por fase (execução)
+
+### FASE 0 – Setup
+
+Entregáveis:
+- Next.js + TS + Tailwind funcionando.
+- Estrutura de pastas criada.
+- Rotas básicas renderizando: `/login`, `/app/dashboard`, `/totem`.
+
+Critério de aceite:
+- `npm run dev` sobe o projeto sem erros.
+- Navegação entre páginas sem quebrar.
+
+### FASE 1 – Login Admin (mock)
+
+Entregáveis:
+- `/login` com validação e fluxo de sucesso/erro.
+- `authService.fakeLoginAdmin()` e contrato esperado do login real documentado.
+- Guard simples para área `/app/*`.
+
+Critério de aceite:
+- Login válido redireciona para `/app/dashboard`.
+- Login inválido mostra erro.
+- Acessar `/app/dashboard` sem login redireciona para `/login`.
+
+### FASE 2 – Shell Admin
+
+Entregáveis:
+- Layout base de `/app` com topbar + sidebar.
+- Rotas do menu funcionando (dashboard, lojas, totens, settings se existir).
+
+Critério de aceite:
+- Sidebar navega sem reload e sem quebrar estado.
+- Layout consistente entre páginas.
+
+### FASE 3 – Telas Admin + Self Checkout (mock)
+
+Entregáveis Admin:
+- `/app/stores` lista e “criar loja” em memória.
+- `/app/terminals` lista e “criar totem” em memória (associado a loja).
+- `/app/settings` (opcional) com regras comerciais mock (parcelas, mínimo, crediário).
+
+Entregáveis Totem:
+- `/totem` com:
+  - identificação (CNPJ/usuário) mock,
+  - “leitura” de código de barras (input),
+  - carrinho (itens, +/−, remover),
+  - pagamento mock (pix/débito/crédito/crediário),
+  - finalização mostrando pedido mock.
+
+Critério de aceite:
+- Fluxo completo do totem funciona sem “buracos” (do início ao comprovante).
+- Admin consegue criar loja e associar totem (mesmo que só em memória).
+
+### FASE 4 – Ready for API
+
+Entregáveis:
+- Mocks isolados em `lib/services`.
+- Tipos/contratos centralizados.
+- Pontos de integração documentados (login, produtos, submit order).
+
+Critério de aceite:
+- Para trocar mock por API real, basta editar serviços em `lib/services` (sem reescrever páginas).
+
+---
+
+## 5. Saída do MVP (o que precisa estar pronto para apresentação)
+
+- Login admin demonstrável.
+- Área admin navegável com telas de lojas e totens.
+- Totem com fluxo de compra completo (mock), com mensagens claras.
+- Documento `doc/planejamento-frontend-mvp.md` atualizado com status das fases.
+
